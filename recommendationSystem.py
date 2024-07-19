@@ -1,177 +1,71 @@
+user_skills = {
 
+  "user1": ["Python", "Data Analysis"],
 
+  "user2": ["Web Development", "JavaScript"],
 
+  "user3": ["Machine Learning", "Python"],
 
+}
 
 
-def print_board(board):
 
-  for row in board:
 
-    print(' '.join(row))
 
+internships = {
 
+  "Data Analyst": {
 
-def empty_indices(board):
+    "skills": ["Python", "SQL"],
 
-  return [i for i, spot in enumerate(board) if spot != "X" and spot != "O"]
+    "rating": 4.2
 
+    },
 
+  "Web Development": {
 
-def winning(board, player):
+    "skills": ["HTML", "JavaScript"],
 
-  win_combinations = [
+    "rating": 4.0
 
-    (0, 1, 2), (3, 4, 5), (6, 7, 8),
+    },
 
-    (0, 3, 6), (1, 4, 7), (2, 5, 8),
+  "Machine Learning Engineer": {
 
-    (0, 4, 8), (2, 4, 6) ]    
+    "skills": ["Machine Learning", "Python"],
 
-  for combo in win_combinations:
+    "rating": 4.8
 
-    if all(board[i] == player for i in combo):
+    },
 
-       return True
+}
 
-  return False
 
 
+def recommend_internships(user_id):
 
-def minimax(board, depth, is_maximizing_player):
+  user_skills_list = user_skills[user_id]
 
-  if winning(board, "X"):
+  recommended = []
 
-     return 10 - depth
+  for internship_title, details in internships.items():
 
-  elif winning(board, "O"):
+    if any(skill in user_skills_list for skill in details["skills"]):
 
-     return depth - 10
+      recommended.append(internship_title)
 
-  elif len(empty_indices(board)) == 0:
+  recommended.sort(key=lambda internship: internships[internship]["rating"], reverse=True)
 
-     return 0
+  return recommended
 
 
 
-  if is_maximizing_player:
+# example usage
 
-    best_val = float("-inf")
+user_id = "user1"
 
-    for move in empty_indices(board):
+print(f"Hi {user_id}, here are some internship recommendations for you:")
 
-      new_board = board.copy()
+for internship in recommend_internships(user_id):
 
-      new_board[move] = "X"
-
-      val = minimax(new_board, depth + 1, False)
-
-      best_val = max(best_val, val)
-
-    return best_val
-
-  else:
-
-    best_val = float("inf")
-
-    for move in empty_indices(board):
-
-      new_board = board.copy()
-
-      new_board[move] = "O"
-
-      val = minimax(new_board, depth + 1, True)
-
-      best_val = min(best_val, val)
-
-    return best_val
-
-
-
-def find_best_move(board):
-
-  best_score = float("-inf")
-
-  best_move = None
-
-  for move in empty_indices(board):
-
-    new_board = board.copy()
-
-    new_board[move] = "X"
-
-    score = minimax(new_board, 0, False)
-
-    if score > best_score:
-
-      best_score = score
-
-      best_move = move
-
-  return best_move
-
-
-
-def main():
-
-  board = [" "] * 9
-
-  print(" Tic-Tac-Toe")
-
-  print_board(board)
-
-
-
-  while True:
-
-    player_move = int(input("Enter your move (0-8): "))
-
-    if board[player_move] != " ":
-
-      print("Invalid move. Try again.")
-
-      continue
-
-    board[player_move] = "O"
-
-    print_board(board)
-
-
-
-    if winning(board, "O"):
-
-      print("Congratulations! You win!")
-
-      break
-
-
-
-    ai_move = find_best_move(board)
-
-    board[ai_move] = "X"
-
-    print(f"AI's move: {ai_move}")
-
-    print_board(board)
-
-
-
-    if winning(board, "X"):
-
-      print("AI wins! Better luck next time.")
-
-      break
-
-
-
-    if len(empty_indices(board)) == 0:
-
-      print("It's a draw! Well played.")
-
-      break
-
-
-
-if __name__ == "__main__":
-
-  main()
+  print(f"- {internship}")
